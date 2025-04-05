@@ -1,34 +1,38 @@
 import MovieCard, { MovieCardProps } from "@/app/component/MovieCard";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import React, { useState, useRef } from "react";
 import AddCardModal from "@/app/component/AddCardModal";
-
 
 interface MovieListProps {
     cards: MovieCardProps[];
     onAddMovie: (movie: MovieCardProps) => void;
+    onDeleteMovie?: (index: number) => void;
 }
 
-function MovieListEmpty({ cards, onAddMovie }: MovieListProps) {
+function MovieListEmpty({ cards, onAddMovie, onDeleteMovie }: MovieListProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [confirmDeleteIndex, setConfirmDeleteIndex] = useState<number | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const scrollAmount = 470;
 
     const scrollLeft = () => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-        }
+        scrollRef.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" });
     };
 
     const scrollRight = () => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-        }
+        scrollRef.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
     };
 
     const handleAddMovie = (movie: MovieCardProps) => {
         onAddMovie(movie);
         setIsModalOpen(false);
+    };
+
+    const handleConfirmDelete = () => {
+        if (confirmDeleteIndex !== null && onDeleteMovie) {
+            onDeleteMovie(confirmDeleteIndex);
+        }
+        setConfirmDeleteIndex(null);
     };
 
     return (
@@ -52,8 +56,18 @@ function MovieListEmpty({ cards, onAddMovie }: MovieListProps) {
                 className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide"
             >
                 {cards.map((movie, idx) => (
-                    <div key={idx} className="min-w-[18rem] flex-shrink-0">
+                    <div
+                        key={idx}
+                        className="relative min-w-[18rem] flex-shrink-0 group"
+                    >
                         <MovieCard {...movie} />
+                        <button
+                            onClick={() => setConfirmDeleteIndex(idx)}
+                            className="absolute z-30 top-2 right-2 bg-red-500/80 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                            title="Видалити"
+                        >
+                            <Trash2 size={20} />
+                        </button>
                     </div>
                 ))}
 
@@ -65,8 +79,35 @@ function MovieListEmpty({ cards, onAddMovie }: MovieListProps) {
                 </div>
             </div>
 
-            {/* Модальное окно */}
-            {isModalOpen && <AddCardModal onAddMovie={handleAddMovie} onClose={() => setIsModalOpen(false)} />}
+            {isModalOpen && (
+                <AddCardModal
+                    onAddMovie={handleAddMovie}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            )}
+
+            {confirmDeleteIndex !== null && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white/5 backdrop-blur-lg rounded-xl p-6 w-[300px] shadow-xl text-center">
+                        <h2 className="text-2xl font-semibold mb-4">Видалити фільм?</h2>
+                        <p className="text-lg text-white/80 mb-6">Ви впевнені, що хочете видалити цей фільм?</p>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 cursor-pointer"
+                                onClick={handleConfirmDelete}
+                            >
+                                Видалити
+                            </button>
+                            <button
+                                className="bg-gray-400 px-4 py-2 rounded-md hover:bg-gray-500 cursor-pointer"
+                                onClick={() => setConfirmDeleteIndex(null)}
+                            >
+                                Скасувати
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     );
 }

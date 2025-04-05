@@ -3,6 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import MovieListEmpty from "@/app/component/MovieListEmpty";
 import {MovieCardProps} from "@/app/component/MovieCard";
 import Header from "@/app/component/Header";
+import axios from "axios";
 
 const Home = () => {
     const [movies, setMovies] = useState<MovieCardProps[]>([])
@@ -35,6 +36,21 @@ const Home = () => {
         }
     };
 
+    const handleDeleteMovie = async (index: number) => {
+        try {
+            const movieToDelete = movies[index];
+
+            await axios.post('/api/delete-data', {
+                id: movieToDelete?._id,
+            });
+
+            setMovies((prev) => prev.filter((_, i) => i !== index));
+        } catch (error) {
+            console.error('Помилка при видаленні фільму:', error);
+            alert('Не вдалось видалити фільм. Попробуйте знову.');
+        }
+    };
+
     return (
         <div>
             <Header
@@ -42,7 +58,7 @@ const Home = () => {
                 onLocationChange={() => console.log('Location change clicked')}
                 onLogout={() => console.log('Logout clicked')}
             />
-            <MovieListEmpty cards={movies} onAddMovie={handleAddMovie} />
+            <MovieListEmpty cards={movies} onAddMovie={handleAddMovie} onDeleteMovie={handleDeleteMovie}/>
         </div>
     );
 };

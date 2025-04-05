@@ -1,6 +1,7 @@
 import React from "react";
 
 export interface MovieCardProps {
+    _id?: string;
     title: string;
     ageRating: string;
     posterUrl: string;
