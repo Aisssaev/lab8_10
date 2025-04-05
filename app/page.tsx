@@ -3,6 +3,7 @@ import React, {useRef} from "react";
 import MovieCard from "@/app/component/MovieCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Header from "@/app/component/Header";
+import MultiplexHeader from "@/app/component/Header1";
 
 const movies = [
   {
@@ -61,17 +62,22 @@ const Home = () => {
 
   return (
       <>
-        <Header></Header>
+      <MultiplexHeader
+                  currentLocation="Львів, Victoria Gardens"
+                  onLocationChange={() => console.log('Location change clicked')}
+                  onLogout={() => console.log('Logout clicked')}
+                />
+        {/*<Header></Header>*/}
         <main className="relative px-6 h-[80vh] py-5">
           <button
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-white/5 rounded-full p-2 shadow-md transition-transform hover:scale-110 cursor-pointer hover:bg-white/10"
               onClick={scrollLeft}
           >
             <ChevronLeft size={40} />
           </button>
 
           <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-white/5 rounded-full p-2 shadow-md transition-transform hover:scale-110 cursor-pointer hover:bg-white/10"
               onClick={scrollRight}
           >
             <ChevronRight size={40} />
