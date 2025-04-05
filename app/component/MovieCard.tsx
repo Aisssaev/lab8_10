@@ -16,25 +16,33 @@ function MovieCard({title, ageRating, posterUrl, showtimes}: MovieCardProps){
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
 
-            {/* Заголовок и рейтинг (всегда видимы) */}
-            <div className="absolute bottom-4 left-4 text-white z-10">
-                <h3 className="text-3xl font-bold drop-shadow-md">{title}</h3>
-                <span className="mt-2 inline-block bg-red-600 px-3 py-1 rounded-full text-sm font-semibold">
-                {ageRating}
-                </span>
+            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 text-white z-10">
+                <div className={`flex flex-col items-center`}>
+                    <h3 className="text-3xl font-bold drop-shadow-md whitespace-nowrap">{title}</h3>
+                    <span className="mt-2 inline-block bg-red-600 px-3 py-1 rounded-full text-sm font-semibold">
+                        {ageRating}
+                    </span>
+                </div>
             </div>
 
-            {/* Сеансы — скрыты по умолчанию, видны при наведении */}
-            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
-                <div className="flex flex-wrap gap-3 justify-center">
-                    {showtimes.map((time, idx) => (
-                        <span
-                            key={idx}
-                            className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg text-sm transition"
-                        >
-                        {time}
-                        </span>
-                    ))}
+            <div className="absolute inset-0 backdrop-blur-lg bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center z-20">
+                <div className={`flex flex-col items-center`}>
+                    <span className={`mt-50 mb-5 text-xl`}>Розклад сеансів</span>
+                    <div className="flex flex-wrap gap-3 justify-center">
+                        {showtimes.map((time, idx) => (
+                            <span
+                                key={idx}
+                                className="text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm transition"
+                            >{time}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+                <div className={`mt-69 flex flex-col items-center`}>
+                    <h3 className="text-3xl font-bold drop-shadow-md">{title}</h3>
+                    <span className="mt-2 inline-block bg-red-600 px-3 py-1 rounded-full text-sm font-semibold">
+                        {ageRating}
+                    </span>
                 </div>
             </div>
         </div>

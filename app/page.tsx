@@ -1,4 +1,3 @@
-// pages/Home.tsx или App.tsx
 'use client'
 import React, {useRef} from "react";
 import MovieCard from "@/app/component/MovieCard";
@@ -9,7 +8,7 @@ const movies = [
   {
     title: "A Minecraft Movie",
     ageRating: "12+",
-    posterUrl: "/img.png", // заменить на реальную ссылку
+    posterUrl: "/img.png",
     showtimes: ["10:10", "12:25", "14:40", "17:00", "19:20"],
   },
   {
@@ -46,7 +45,7 @@ const movies = [
 
 const Home = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const scrollAmount = 300; // пикселей
+  const scrollAmount = 470;
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -64,22 +63,20 @@ const Home = () => {
       <>
         <Header></Header>
         <main className="relative px-6 h-[80vh] py-5">
-          {/* Стрелки */}
           <button
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
               onClick={scrollLeft}
           >
             <ChevronLeft size={40} />
           </button>
 
           <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
               onClick={scrollRight}
           >
             <ChevronRight size={40} />
           </button>
 
-          {/* Слайдер */}
           <div
               ref={scrollRef}
               className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide"
