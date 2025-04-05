@@ -11,6 +11,7 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
         title: '',
         ageRating: '',
         posterUrl: '',
+        days: [],
         showtimes: [],
     });
 
@@ -31,7 +32,7 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
 
     const handleSubmit = () => {
         onAddMovie(newMovie);
-        setNewMovie({ title: '', ageRating: '', posterUrl: '', showtimes: [] });
+        setNewMovie({ title: '', ageRating: '', posterUrl: '', days: [], showtimes: [] });
     };
 
     const isFormValid =
@@ -80,6 +81,16 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
                         }}
                     />
                 )}
+                <input
+                    type="text"
+                    name="days"
+                    value={newMovie.days.join(', ')}
+                    onChange={(e) =>
+                        setNewMovie({ ...newMovie, days: e.target.value.split(',').map((d) => d.trim()) })
+                    }
+                    placeholder="Дні показу (YYYY-MM-DD, через кому)"
+                    className="w-full mb-4 p-3 border-2 border-gray-300 focus:outline-none rounded"
+                />
                 <input
                     type="text"
                     name="showtimes"

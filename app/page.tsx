@@ -24,7 +24,7 @@ const Home = () => {
                   onLogout={() => console.log('Logout clicked')}
                 />
         {/*<Header></Header>*/}
-        <MovieList cards={data}></MovieList>
+        <MovieList movies={data}></MovieList>
       </>
   );
 };

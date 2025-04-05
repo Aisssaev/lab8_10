@@ -5,6 +5,7 @@ export interface MovieCardProps {
     title: string;
     ageRating: string;
     posterUrl: string;
+    days: string[];
     showtimes: string[];
 }
 
