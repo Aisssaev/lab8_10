@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import LoginModal from './LoginModal';
 
 interface MultiplexHeaderProps {
     currentLocation: string;
@@ -12,6 +13,7 @@ const MultiplexHeader: React.FC<MultiplexHeaderProps> = ({
                                                              onLogout = () => {},
                                                          }) => {
     const [isLocationListOpen, setIsLocationListOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const locations = [
         "Львів, Victoria Gardens"
@@ -24,6 +26,14 @@ const MultiplexHeader: React.FC<MultiplexHeaderProps> = ({
     const handleLocationSelect = (newLocation: string) => {
         onLocationChange(newLocation);
         setIsLocationListOpen(false);
+    };
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
     };
 
     return (
@@ -69,13 +79,14 @@ const MultiplexHeader: React.FC<MultiplexHeaderProps> = ({
 
                     <button
                         className="flex items-center cursor-pointer text-white font-bold group"
-                        onClick={onLogout}
+                        onClick={openModal}
                     >
                         Увійти
                         <img className={`rounded-full ml-3 bg-gray-500 group-hover:bg-red-500`} src={"/ava_temp1.svg"} alt="User Avatar" />
                     </button>
                 </div>
             </nav>
+            <LoginModal isOpen={isModalOpen} onClose={closeModal} />
         </header>
     );
 };
