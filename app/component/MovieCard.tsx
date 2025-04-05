@@ -1,24 +1,19 @@
 import React from "react";
 
-type MovieCardProps = {
+interface MovieCardProps {
     title: string;
     ageRating: string;
     posterUrl: string;
     showtimes: string[];
-};
+}
 
-const MovieCard: React.FC<MovieCardProps> = ({
-                                                 title,
-                                                 ageRating,
-                                                 posterUrl,
-                                                 showtimes,
-                                             }) => {
+function MovieCard({title, ageRating, posterUrl, showtimes}: MovieCardProps){
     return (
-        <div className="relative w-full overflow-hidden rounded-2xl shadow-lg group cursor-pointer">
+        <div className="relative h-[85vh] overflow-hidden rounded-2xl shadow-lg group cursor-pointer">
             <img
                 src={posterUrl}
                 alt={title}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
 
             {/* Заголовок и рейтинг (всегда видимы) */}
@@ -44,6 +39,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
             </div>
         </div>
     );
-};
+}
 
 export default MovieCard;

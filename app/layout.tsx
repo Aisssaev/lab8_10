@@ -25,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html className={`overflow-x-hidden`} lang="ua">
-      <body className={`overflow-x-hidden ${montserrat.className}`}>{children}</body>
+      <html className={`h-full`} lang="ua">
+      <body className={`overflow-x-hidden h-[80vh] ${montserrat.className}`}>{children}</body>
       </html>
   );
 }

@@ -3,6 +3,7 @@
 import React, {useRef} from "react";
 import MovieCard from "@/app/component/MovieCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Header from "@/app/component/Header";
 
 const movies = [
   {
@@ -60,34 +61,37 @@ const Home = () => {
   };
 
   return (
-      <div className="relative px-6 h-9/10 py-5 overflow-y-hidden">
-        {/* Стрелки */}
-        <button
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
-            onClick={scrollLeft}
-        >
-          <ChevronLeft size={40} />
-        </button>
+      <>
+        <Header></Header>
+        <main className="relative px-6 h-[80vh] py-5">
+          {/* Стрелки */}
+          <button
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+              onClick={scrollLeft}
+          >
+            <ChevronLeft size={40} />
+          </button>
 
-        <button
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
-            onClick={scrollRight}
-        >
-          <ChevronRight size={40} />
-        </button>
+          <button
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+              onClick={scrollRight}
+          >
+            <ChevronRight size={40} />
+          </button>
 
-        {/* Слайдер */}
-        <div
-            ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide"
-        >
-          {movies.map((movie, idx) => (
-              <div key={idx} className="min-w-[18rem] flex-shrink-0">
-                <MovieCard {...movie} />
-              </div>
-          ))}
-        </div>
-      </div>
+          {/* Слайдер */}
+          <div
+              ref={scrollRef}
+              className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide"
+          >
+            {movies.map((movie, idx) => (
+                <div key={idx} className="min-w-[18rem] flex-shrink-0">
+                  <MovieCard {...movie} />
+                </div>
+            ))}
+          </div>
+        </main>
+      </>
   );
 };
 
