@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
-import { clientDb } from "@/app/lib/mongodb";
-import Movie from "@/app/models/movie";
-import Session from "@/app/models/session";
-import Seat from "@/app/models/seat";
+import { clientDb } from "@/app/lib/mongodb";;
 import {ObjectId} from "mongodb";
-import Test from "@/app/models/test";
 
 // export async function GET() {
 //     try {
@@ -86,7 +82,7 @@ export async function GET() {
         const movies = await moviesCollection.aggregate([
             {
                 $lookup: {
-                    from: "sessions", // сессии
+                    from: "sessions",
                     localField: "_id",
                     foreignField: "movie",
                     as: "sessions"
@@ -94,7 +90,7 @@ export async function GET() {
             },
             {
                 $lookup: {
-                    from: "seats", // места
+                    from: "seats",
                     localField: "sessions._id",
                     foreignField: "session",
                     as: "seats"
@@ -111,47 +107,47 @@ export async function GET() {
     }
 }
 
+interface SessionData {
+    day: string;
+    time: string;
+}
+
 export async function POST(request: Request) {
     try {
         const { title, description, sessions, rows, columns, seatPrice } = await request.json();
         const db = await clientDb;
+
         const moviesCollection = db.collection('movies');
         const sessionsCollection = db.collection('sessions');
         const seatsCollection = db.collection('seats');
 
-        const newMovie = {
+        const movieResult = await moviesCollection.insertOne({
             title,
             description,
             sessions: []
-        };
-
-        const result = await moviesCollection.insertOne(newMovie);
-        const movieId = result.insertedId;
+        });
+        const movieId = movieResult.insertedId;
 
         for (const sessionData of sessions) {
             const { day, time } = sessionData;
-            const newSession = {
+            const sessionResult = await sessionsCollection.insertOne({
                 movie: movieId,
                 day,
                 time,
                 seats: []
-            };
-
-            const sessionResult = await sessionsCollection.insertOne(newSession);
+            });
             const sessionId = sessionResult.insertedId;
 
             const seats = [];
             for (let row = 1; row <= rows; row++) {
                 for (let column = 1; column <= columns; column++) {
-                    const newSeat = {
+                    const seatResult = await seatsCollection.insertOne({
                         row,
                         column,
                         status: "free",
                         price: seatPrice,
                         session: sessionId
-                    };
-
-                    const seatResult = await seatsCollection.insertOne(newSeat);
+                    });
                     seats.push(seatResult.insertedId);
                 }
             }
@@ -163,7 +159,7 @@ export async function POST(request: Request) {
 
             await moviesCollection.updateOne(
                 { _id: movieId },
-                { $push: { sessions: { $each: [sessionId] } } }
+                { $push: { sessions: sessionId } as any }
             );
         }
 

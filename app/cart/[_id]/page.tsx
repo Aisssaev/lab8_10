@@ -1,25 +1,58 @@
 'use client'
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {MovieCardProps} from "@/app/component/MovieCard";
+import { MovieCardProps } from "@/app/component/MovieCard";
 import HeaderSeatplan from "@/app/component/HeaderSeatplan";
-import SeatMap, {Seat} from "@/app/component/SeatMap";
+import SeatMap, { Seat } from "@/app/component/SeatMap";
 
 interface PageProps {
     params: {
         _id: string;
+        time: string;
     };
 }
 
-const seatData: Seat[] = [
-    { row: 0, column: 0, status: "free", price: 170 },
-    { row: 0, column: 1, status: "taken", price: 170 },
-    { row: 0, column: 2, status: "free", price: 280 },
-    { row: 1, column: 0, status: "free", price: 170 },
-];
+export default function MoviePage() {
+    const [seats, setSeats] = useState<Seat[]>([]);
+    const [sessionTime, setSessionTime] = useState<string>(""); // Время сеанса
+    const [_id, setId] = useState<string>();
 
+    // @ts-ignore
+    const [movie, setMovie] = useState<MovieCardProps>();
 
-export default function MoviePage({ params }: PageProps) {
+    useEffect(() => {
+        setSessionTime(localStorage.getItem("time") || "");
+        setId(localStorage.getItem("id") || "");
+        const fetchMovie = async () => {
+            const response = await axios.get(`/api/movies/${_id}`);
+            const movieData = response.data;
+            setMovie(movieData);
+        };
+
+        if (_id) fetchMovie();
+    }, [_id]);
+
+    useEffect(() => {
+        if (!sessionTime) return;
+
+        const fetchSeats = async () => {
+            try {
+                const response = await axios.get(`/api/movies/${_id}/seats/${sessionTime}`, {
+                    params: {
+                        id: _id,
+                        time: sessionTime
+                    }
+                });
+                const seatData = response.data.seats;
+                setSeats(seatData);
+            } catch (error) {
+                console.error("Error fetching seats:", error);
+            }
+        };
+
+        fetchSeats();
+    }, [sessionTime, _id]);
+
     useEffect(() => {
         document.body.style.backgroundColor = 'white';
         document.body.style.color = 'black';
@@ -30,43 +63,15 @@ export default function MoviePage({ params }: PageProps) {
         };
     }, []);
 
-    // @ts-ignore
-    const _id = React.use(params)._id;
-    const [movie, setMovie] = useState<MovieCardProps>();
-
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await axios.get(`/api/movies/${_id}`);
-            const result = response.data;
-            setMovie(result);
-        }
-
-        if (_id) fetchData();
-    }, [_id]);
+    console.log(seats)
 
     return (
-        // <div className={`grid grid-cols-3`}>
-        //     <div className={`col-span-2 border-r-gray-300 border-b-gray-300 border-b-1 border-r-1 pb-4`}>
-        //         <HeaderSeatplan></HeaderSeatplan>
-        //     </div>
-        //     <div className={``}>
-        //         <div className={`w-[32rem]`}>
-        //             <h1>
-        //                 saddas
-        //             </h1>
-        //         </div>
-        //     </div>
-        //     {/*<h1 className="text-4xl font-bold">Фільм: {movie?.title}</h1>*/}
-        // </div>
         <div className="flex h-screen overflow-hidden">
             {/* Левая часть */}
             <div className="flex-1 overflow-y-scroll p-6">
                 <HeaderSeatplan />
                 <h1 className="text-3xl font-bold mb-4">{movie?.title}</h1>
-                <div className="mb-4">
-                </div>
-                <SeatMap seats={seatData}></SeatMap>
+                <SeatMap seats={seats} />
             </div>
 
             {/* Правая часть */}

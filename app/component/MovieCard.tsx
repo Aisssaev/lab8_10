@@ -17,6 +17,8 @@ function MovieCard({_id, title, ageRating, posterUrl, sessions}: MovieCardProps)
 
     const handleTimeClick = (time: string) => {
         const movieSlug = encodeURIComponent(_id?.toLowerCase().replace(/\s+/g, "-") || "");
+        localStorage.setItem("time", time);
+        localStorage.setItem("id", _id || "");
         router.push(`/cart/${movieSlug}`);
     };
 
