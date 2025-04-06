@@ -3,18 +3,19 @@ import React, {useEffect, useRef, useState} from "react";
 import MultiplexHeader from "@/app/component/Header";
 import MovieList from "@/app/component/MovieList";
 import Header from "@/app/component/Header";
+import axios from "axios";
 
 const Home = () => {
-  const [data, setData] = useState<any>([]);
+  const [movies, setMovies] = useState<any>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('/api/get-data');
-      const result = await response.json();
-      setData(result);
-    };
-    fetchData();
-  }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await axios.get('/api/movies');
+            const result = await response.data;
+            setMovies(result);
+        };
+        fetchData();
+    }, []);
 
   return (
       <>
@@ -24,7 +25,7 @@ const Home = () => {
                   onLogout={() => console.log('Logout clicked')}
                 />
         {/*<Header></Header>*/}
-        <MovieList movies={data}></MovieList>
+        <MovieList movies={movies}></MovieList>
       </>
   );
 };

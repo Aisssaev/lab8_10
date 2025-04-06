@@ -7,13 +7,28 @@ interface ModalProps {
 }
 
 const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
-    const [newMovie, setNewMovie] = useState<MovieCardProps>({
+    const [newMovie, setNewMovie] = useState<{
+        title: string;
+        description: string;
+        posterUrl: string;
+        sessions: { day: string, time: string }[];
+        rows: number;
+        columns: number;
+        seatPrice: number;
+        ageRating: string;
+    }>({
         title: '',
-        ageRating: '',
+        description: '',
         posterUrl: '',
-        days: [],
-        showtimes: [],
+        sessions: [],
+        rows: 5,
+        columns: 8,
+        seatPrice: 120,
+        ageRating: ''
     });
+
+    const [sessionDay, setSessionDay] = useState('');
+    const [sessionTime, setSessionTime] = useState('');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -23,30 +38,41 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
         }));
     };
 
-    const handleShowtimesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewMovie((prevMovie) => ({
-            ...prevMovie,
-            showtimes: e.target.value.split(',').map((item) => item.trim()),
-        }));
+    const handleAddSession = () => {
+        if (sessionDay && sessionTime) {
+            setNewMovie((prev) => ({
+                ...prev,
+                sessions: [...prev.sessions, { day: sessionDay, time: sessionTime }]
+            }));
+            setSessionDay('');
+            setSessionTime('');
+        }
     };
 
     const handleSubmit = () => {
         onAddMovie(newMovie);
-        setNewMovie({ title: '', ageRating: '', posterUrl: '', days: [], showtimes: [] });
+        setNewMovie({
+            title: '',
+            description: '',
+            posterUrl: '',
+            sessions: [],
+            rows: 5,
+            columns: 8,
+            seatPrice: 120,
+            ageRating: ''
+        });
     };
 
     const isFormValid =
         newMovie.title.trim() !== '' &&
-        newMovie.ageRating.trim() !== '' &&
+        newMovie.description.trim() !== '' &&
         newMovie.posterUrl.trim() !== '' &&
-        newMovie.showtimes.length > 0 &&
-        newMovie.showtimes.every((s) => s.trim() !== '');
-
+        newMovie.sessions.length > 0;
 
     return (
         <div className="fixed z-60 inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center">
             <div className="flex flex-col bg-white/5 backdrop-blur-xl p-6 items-center rounded-lg w-[400px]">
-                <h2 className="text-3xl text-center font-bold mb-4" >Добавити новий фільм</h2>
+                <h2 className="text-3xl text-center font-bold mb-4">Добавити новий фільм</h2>
                 <input
                     type="text"
                     name="title"
@@ -65,6 +91,14 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
                 />
                 <input
                     type="text"
+                    name="description"
+                    value={newMovie.description}
+                    onChange={handleInputChange}
+                    placeholder="Опис"
+                    className="w-full mb-4 p-3 border-2 border-gray-300 focus:outline-none rounded"
+                />
+                <input
+                    type="text"
                     name="posterUrl"
                     value={newMovie.posterUrl}
                     onChange={handleInputChange}
@@ -77,28 +111,66 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
                         alt="Передперегляд постера"
                         className="w-full max-h-[300px] object-contain mb-4 border border-gray-300 rounded"
                         onError={(e) => {
-                            (e.target as HTMLImageElement).src = ''; // скрыть если картинка не грузится
+                            (e.target as HTMLImageElement).src = '';
                         }}
                     />
                 )}
                 <input
-                    type="text"
-                    name="days"
-                    value={newMovie.days.join(', ')}
-                    onChange={(e) =>
-                        setNewMovie({ ...newMovie, days: e.target.value.split(',').map((d) => d.trim()) })
-                    }
-                    placeholder="Дні показу (YYYY-MM-DD, через кому)"
+                    type="number"
+                    name="rows"
+                    value={newMovie.rows}
+                    onChange={handleInputChange}
+                    placeholder="Кількість рядів"
                     className="w-full mb-4 p-3 border-2 border-gray-300 focus:outline-none rounded"
                 />
                 <input
-                    type="text"
-                    name="showtimes"
-                    value={newMovie.showtimes.join(', ')}
-                    onChange={handleShowtimesChange}
-                    placeholder="Час сеансів (через кому)"
+                    type="number"
+                    name="columns"
+                    value={newMovie.columns}
+                    onChange={handleInputChange}
+                    placeholder="Кількість місць у ряду"
                     className="w-full mb-4 p-3 border-2 border-gray-300 focus:outline-none rounded"
                 />
+                <input
+                    type="number"
+                    name="seatPrice"
+                    value={newMovie.seatPrice}
+                    onChange={handleInputChange}
+                    placeholder="Ціна місця"
+                    className="w-full mb-4 p-3 border-2 border-gray-300 focus:outline-none rounded"
+                />
+                <div className="w-full mb-4">
+                    <h3 className="text-lg font-medium mb-2">Додати сеанс</h3>
+                    <input
+                        type="date"
+                        value={sessionDay}
+                        onChange={(e) => setSessionDay(e.target.value)}
+                        className="w-full mb-2 p-2 border rounded"
+                    />
+                    <input
+                        type="time"
+                        value={sessionTime}
+                        onChange={(e) => setSessionTime(e.target.value)}
+                        className="w-full mb-2 p-2 border rounded"
+                    />
+                    <button
+                        onClick={handleAddSession}
+                        className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                    >
+                        Додати сеанс
+                    </button>
+                </div>
+                {newMovie.sessions.length > 0 && (
+                    <div className="w-full mb-4">
+                        <h4 className="font-semibold mb-2">Сеанси:</h4>
+                        <ul className="list-disc list-inside">
+                            {newMovie.sessions.map((session, index) => (
+                                <li key={index}>{session.day} — {session.time}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
                 <div className="flex flex-row gap-10">
                     <button
                         onClick={handleSubmit}

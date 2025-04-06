@@ -18,11 +18,16 @@ const Home = () => {
 
     const handleAddMovie = async (newMovie: MovieCardProps) => {
         try {
+            console.log(newMovie)
             const response = await axios.post('/api/movies', newMovie);
+
             const addedMovie = await response.data;
             setMovies((prevMovies) => [...prevMovies, addedMovie]);
         } catch (error) {
             console.error('Помилка при добавленні фільму');
+            if (axios.isAxiosError(error)) {
+                console.error('Деталі:', error.response?.data);
+            }
         }
     };
 
@@ -54,6 +59,5 @@ const Home = () => {
         </div>
     );
 };
-
 
 export default Home;

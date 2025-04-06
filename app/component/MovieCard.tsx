@@ -6,17 +6,17 @@ export interface MovieCardProps {
     title: string;
     ageRating: string;
     posterUrl: string;
-    days: string[];
-    showtimes: string[];
+    sessions: {
+        day: string;
+        time: string;
+    }[];
 }
 
-function MovieCard({_id, title, ageRating, posterUrl, showtimes}: MovieCardProps){
+function MovieCard({_id, title, ageRating, posterUrl, sessions}: MovieCardProps) {
     const router = useRouter();
 
     const handleTimeClick = (time: string) => {
-        console.log(`ID: ${_id}`);
-        const movieSlug = encodeURIComponent(_id?.toLowerCase().replace(/\s+/g, "-") || ""); // slug из названия
-        console.log(`Movie slug ${movieSlug}`);
+        const movieSlug = encodeURIComponent(_id?.toLowerCase().replace(/\s+/g, "-") || "");
         router.push(`/cart/${movieSlug}`);
     };
 
@@ -29,7 +29,6 @@ function MovieCard({_id, title, ageRating, posterUrl, showtimes}: MovieCardProps
                     className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                 />
             </div>
-
 
             <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 text-white z-10">
                 <div className={`flex flex-col items-center`}>
@@ -44,12 +43,13 @@ function MovieCard({_id, title, ageRating, posterUrl, showtimes}: MovieCardProps
                 <div className={`flex flex-col items-center`}>
                     <span className={`mb-5 text-xl`}>Розклад сеансів</span>
                     <div className="mb-60 flex flex-wrap gap-3 justify-center">
-                        {showtimes.map((time, idx) => (
+                        {sessions?.map((session, idx) => (
                             <span
                                 key={idx}
-                                onClick={() => handleTimeClick(time)}
+                                onClick={() => handleTimeClick(session.time)}
                                 className="text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm transition"
-                            >{time}
+                            >
+                                {session.time}
                             </span>
                         ))}
                     </div>

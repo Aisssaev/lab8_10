@@ -1,6 +1,6 @@
 import MovieCard, {MovieCardProps} from "@/app/component/MovieCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useRef } from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 interface MovieListProps {
     movies: MovieCardProps[];
@@ -11,8 +11,11 @@ function MovieList({ movies }: MovieListProps) {
     const scrollAmount = 470;
 
     const today = new Date().toISOString().split("T")[0];
-    console.log(movies)
-    const moviesToday = movies?.filter((movie) => movie.days?.includes(today));
+    const moviesToday = movies.filter((movie) =>
+        movie.sessions?.some((s) => {
+            return s.day === today
+        })
+    );
 
     const scrollLeft = () => {
         if (scrollRef.current) {
@@ -49,12 +52,11 @@ function MovieList({ movies }: MovieListProps) {
                 {moviesToday?.map((movie, idx) => (
                     <div key={movie?._id} className="min-w-[18rem] flex-shrink-0">
                         <MovieCard
-                            _id={movie?._id}
+                            _id={movie._id}
                             title={movie.title}
                             ageRating={movie.ageRating}
                             posterUrl={movie.posterUrl}
-                            days={movie.days}
-                            showtimes={movie.showtimes}
+                            sessions={movie.sessions}
                         />
                     </div>
                 ))}
