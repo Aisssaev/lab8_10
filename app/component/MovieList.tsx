@@ -49,6 +49,7 @@ function MovieList({ movies }: MovieListProps) {
                 {moviesToday?.map((movie, idx) => (
                     <div key={movie?._id} className="min-w-[18rem] flex-shrink-0">
                         <MovieCard
+                            _id={movie?._id}
                             title={movie.title}
                             ageRating={movie.ageRating}
                             posterUrl={movie.posterUrl}

@@ -9,29 +9,19 @@ const Home = () => {
     const [movies, setMovies] = useState<MovieCardProps[]>([])
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('/api/get-data');
-            const result = await response.json();
+            const response = await axios.get('/api/movies');
+            const result = await response.data;
             setMovies(result);
         };
         fetchData();
     }, []);
 
-
-    console.log(movies)
-
     const handleAddMovie = async (newMovie: MovieCardProps) => {
-        const response = await fetch('/api/add-data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newMovie),
-        });
-
-        if (response.ok) {
-            const addedMovie = await response.json();
+        try {
+            const response = await axios.post('/api/movies', newMovie);
+            const addedMovie = await response.data;
             setMovies((prevMovies) => [...prevMovies, addedMovie]);
-        } else {
+        } catch (error) {
             console.error('Помилка при добавленні фільму');
         }
     };
@@ -40,8 +30,10 @@ const Home = () => {
         try {
             const movieToDelete = movies[index];
 
-            await axios.post('/api/delete-data', {
-                id: movieToDelete?._id,
+            await axios.delete('/api/movies', {
+                params: {
+                    id: movieToDelete?._id,
+                }
             });
 
             setMovies((prev) => prev.filter((_, i) => i !== index));

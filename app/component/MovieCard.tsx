@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/navigation";
 
 export interface MovieCardProps {
     _id?: string;
@@ -9,7 +10,16 @@ export interface MovieCardProps {
     showtimes: string[];
 }
 
-function MovieCard({title, ageRating, posterUrl, showtimes}: MovieCardProps){
+function MovieCard({_id, title, ageRating, posterUrl, showtimes}: MovieCardProps){
+    const router = useRouter();
+
+    const handleTimeClick = (time: string) => {
+        console.log(`ID: ${_id}`);
+        const movieSlug = encodeURIComponent(_id?.toLowerCase().replace(/\s+/g, "-") || ""); // slug из названия
+        console.log(`Movie slug ${movieSlug}`);
+        router.push(`/cart/${movieSlug}`);
+    };
+
     return (
         <div className="relative h-[85vh] overflow-hidden rounded-2xl shadow-lg group cursor-pointer">
             <div className={`overflow-x-hidden max-w-80 h-full`}>
@@ -37,6 +47,7 @@ function MovieCard({title, ageRating, posterUrl, showtimes}: MovieCardProps){
                         {showtimes.map((time, idx) => (
                             <span
                                 key={idx}
+                                onClick={() => handleTimeClick(time)}
                                 className="text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm transition"
                             >{time}
                             </span>
