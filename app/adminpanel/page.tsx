@@ -20,6 +20,7 @@ const Home = () => {
         try {
             console.log(newMovie)
             const response = await axios.post('/api/movies', newMovie);
+            console.log(response.data)
 
             const addedMovie = await response.data;
             setMovies((prevMovies) => [...prevMovies, addedMovie]);
@@ -47,6 +48,8 @@ const Home = () => {
             alert('Не вдалось видалити фільм. Попробуйте знову.');
         }
     };
+
+    console.log(movies)
 
     return (
         <div>

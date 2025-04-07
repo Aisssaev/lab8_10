@@ -27,8 +27,14 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
         ageRating: ''
     });
 
-    const [sessionDay, setSessionDay] = useState('');
-    const [sessionTime, setSessionTime] = useState('');
+    const now = new Date();
+    const defaultDate = now.toISOString().split('T')[0]; // YYYY-MM-DD
+    const defaultTime = new Date(now.getTime() + 2 * 60 * 60 * 1000) // +2 години
+        .toTimeString()
+        .slice(0, 5);
+
+    const [sessionDay, setSessionDay] = useState(defaultDate);
+    const [sessionTime, setSessionTime] = useState(defaultTime);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

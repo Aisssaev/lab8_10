@@ -107,14 +107,18 @@ export async function GET() {
     }
 }
 
-interface SessionData {
-    day: string;
-    time: string;
+interface Data {
+    title: string,
+    posterUrl: string,
+    sessions: [],
+    rows: number,
+    columns: number,
+    seatPrice: number
 }
 
 export async function POST(request: Request) {
     try {
-        const { title, description, sessions, rows, columns, seatPrice } = await request.json();
+        const { title, posterUrl, sessions, rows, columns, seatPrice } : Data  = await request.json();
         const db = await clientDb;
 
         const moviesCollection = db.collection('movies');
@@ -123,7 +127,7 @@ export async function POST(request: Request) {
 
         const movieResult = await moviesCollection.insertOne({
             title,
-            description,
+            posterUrl,
             sessions: []
         });
         const movieId = movieResult.insertedId;
@@ -163,7 +167,7 @@ export async function POST(request: Request) {
             );
         }
 
-        return NextResponse.json({ movieId, title, description }, { status: 201 });
+        return NextResponse.json({ _id: movieId, title, posterUrl, sessions}, { status: 201 });
     } catch (error) {
         console.error("Error adding movie with sessions:", error);
         return NextResponse.json(
