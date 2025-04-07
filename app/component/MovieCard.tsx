@@ -9,6 +9,7 @@ export interface MovieCardProps {
     sessions: {
         day: string;
         time: string;
+        hall: string;
     }[];
 }
 

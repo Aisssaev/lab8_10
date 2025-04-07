@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { MovieCardProps } from './MovieCard';
 
 interface ModalProps {
@@ -9,22 +9,20 @@ interface ModalProps {
 const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
     const [newMovie, setNewMovie] = useState<{
         title: string;
-        description: string;
         posterUrl: string;
-        sessions: { day: string, time: string }[];
+        sessions: { day: string, time: string, hall: string}[];
         rows: number;
         columns: number;
         seatPrice: number;
         ageRating: string;
     }>({
         title: '',
-        description: '',
         posterUrl: '',
         sessions: [],
         rows: 5,
         columns: 8,
         seatPrice: 120,
-        ageRating: ''
+        ageRating: '',
     });
 
     const now = new Date();
@@ -35,6 +33,18 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
 
     const [sessionDay, setSessionDay] = useState(defaultDate);
     const [sessionTime, setSessionTime] = useState(defaultTime);
+    const [hall, setHall] = useState('')
+    const [availableHalls, setAvailableHalls] = useState<{ _id: string; name: string }[]>([]);
+
+    useEffect(() => {
+        const fetchHalls = async () => {
+            const res = await fetch('/api/halls');
+            const halls = await res.json();
+            setAvailableHalls(halls);
+            if (halls.length > 0) setHall(halls[0]._id); // дефолтне значення
+        };
+        fetchHalls();
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -45,10 +55,10 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
     };
 
     const handleAddSession = () => {
-        if (sessionDay && sessionTime) {
+        if (sessionDay && sessionTime && hall) {
             setNewMovie((prev) => ({
                 ...prev,
-                sessions: [...prev.sessions, { day: sessionDay, time: sessionTime }]
+                sessions: [...prev.sessions, { day: sessionDay, time: sessionTime, hall: hall }]
             }));
             setSessionDay('');
             setSessionTime('');
@@ -59,19 +69,17 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
         onAddMovie(newMovie);
         setNewMovie({
             title: '',
-            description: '',
             posterUrl: '',
             sessions: [],
             rows: 5,
             columns: 8,
             seatPrice: 120,
-            ageRating: ''
+            ageRating: '',
         });
     };
 
     const isFormValid =
         newMovie.title.trim() !== '' &&
-        newMovie.description.trim() !== '' &&
         newMovie.posterUrl.trim() !== '' &&
         newMovie.sessions.length > 0;
 
@@ -93,14 +101,6 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
                     value={newMovie.ageRating}
                     onChange={handleInputChange}
                     placeholder="Вікове обмеження"
-                    className="w-full mb-4 p-3 border-2 border-gray-300 focus:outline-none rounded"
-                />
-                <input
-                    type="text"
-                    name="description"
-                    value={newMovie.description}
-                    onChange={handleInputChange}
-                    placeholder="Опис"
                     className="w-full mb-4 p-3 border-2 border-gray-300 focus:outline-none rounded"
                 />
                 <input
@@ -159,6 +159,17 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
                         onChange={(e) => setSessionTime(e.target.value)}
                         className="w-full mb-2 p-2 border rounded"
                     />
+                    <select
+                        value={hall}
+                        onChange={(e) => setHall(e.target.value)}
+                        className="w-full mb-2 p-2 border rounded"
+                    >
+                        {availableHalls.map(hall => (
+                            <option key={hall._id} value={hall._id}>
+                                {hall.name}
+                            </option>
+                        ))}
+                    </select>
                     <button
                         onClick={handleAddSession}
                         className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"

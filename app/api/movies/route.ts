@@ -113,12 +113,13 @@ interface Data {
     sessions: [],
     rows: number,
     columns: number,
-    seatPrice: number
+    seatPrice: number,
+    hall: string
 }
 
 export async function POST(request: Request) {
     try {
-        const { title, posterUrl, sessions, rows, columns, seatPrice } : Data  = await request.json();
+        const { title, posterUrl, sessions, rows, columns, seatPrice, hall } : Data  = await request.json();
         const db = await clientDb;
 
         const moviesCollection = db.collection('movies');
@@ -133,11 +134,12 @@ export async function POST(request: Request) {
         const movieId = movieResult.insertedId;
 
         for (const sessionData of sessions) {
-            const { day, time } = sessionData;
+            const { day, time, hall } = sessionData;
             const sessionResult = await sessionsCollection.insertOne({
                 movie: movieId,
                 day,
                 time,
+                hall: new ObjectId(hall),
                 seats: []
             });
             const sessionId = sessionResult.insertedId;
