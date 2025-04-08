@@ -2,10 +2,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 export type Seat = {
+    _id: string;
     row: number;
     column: number;
     status: "free" | "taken" | "selected";
     price: number;
+    session?: {
+        $oid: string;
+    };
 };
 
 interface SeatMapProps {

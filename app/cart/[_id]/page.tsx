@@ -1,6 +1,7 @@
 'use client'
 import React, {use, useEffect, useState} from "react";
 import axios from "axios";
+import { Toaster, toast } from 'react-hot-toast';
 import { MovieCardProps } from "@/app/component/MovieCard";
 import HeaderSeatplan from "@/app/component/HeaderSeatplan";
 import SeatMap, { Seat } from "@/app/component/SeatMap";
@@ -60,9 +61,12 @@ export default function MoviePage() {
                     }
                 });
                 const seatData = response.data.seats.map((seat: any) => ({
-                    ...seat,
+                    _id: seat._id.toString(),
+                    row: seat.row,
+                    column: seat.column,
+                    status: seat.status,
                     price: Number(seat.price)
-                }));
+                })) as Seat[];
                 setSeats(seatData);
                 if (response.data.session?.day) {
                     setSessionDay(response.data.session.day);
@@ -84,6 +88,45 @@ export default function MoviePage() {
             document.body.style.color = '';
         };
     }, []);
+
+    const handlePurchase = async () => {
+        try {
+            if (selectedSeats.length === 0) {
+                alert('Будь ласка, оберіть місця');
+                return;
+            }
+
+            const response = await axios.post(`/api/movies/${_id}/purchase`, {
+                sessionTime,
+                seats: selectedSeats.map(seat => ({
+                    _id: seat._id,
+                    row: seat.row,
+                    column: seat.column,
+                    status: seat.status
+                }))
+            });
+
+            const updatedSeats = seats.map(seat => {
+                const isPurchased = selectedSeats.some(s => s._id === seat._id);
+                return isPurchased ? { ...seat, status: 'taken' } : seat;
+            });
+
+            console.log(updatedSeats);
+
+            // @ts-ignore
+            setSeats(updatedSeats);
+            setSelectedSeats([]);
+
+            toast.success('Квитки успішно придбані!', {
+                duration: 2000
+            });
+        } catch (error) {
+            console.error('Помилка при покупці квитків:', error);
+            toast.error('Сталася помилка при покупці квитків', {
+                duration: 2000
+            });
+        }
+    };
 
     function getDayOfWeek(dateString: string): string {
         const days = ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'];
@@ -181,11 +224,12 @@ export default function MoviePage() {
                         <span className="font-medium">Всього:</span>
                         <span className="font-bold">{totalPrice} грн</span>
                     </div>
-                    <button className="w-full bg-red-600 text-white py-3 rounded hover:bg-red-700 font-medium">
+                    <button onClick={handlePurchase} className="w-full bg-red-600 text-white py-3 rounded hover:bg-red-700 font-medium">
                         Продовжити
                     </button>
                 </div>
             </div>
+            <Toaster position="top-right" />
         </div>
     );
 }
