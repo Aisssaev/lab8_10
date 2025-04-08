@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import React, {use, useEffect, useState} from "react";
 import axios from "axios";
 import { MovieCardProps } from "@/app/component/MovieCard";
 import HeaderSeatplan from "@/app/component/HeaderSeatplan";
@@ -7,6 +7,7 @@ import SeatMap, { Seat } from "@/app/component/SeatMap";
 
 export default function MoviePage() {
     const [seats, setSeats] = useState<Seat[]>([]);
+    const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
     const [sessionTime, setSessionTime] = useState<string>("");
     const [sessionDay, setSessionDay] = useState<string>("");
     const [hallInfo, setHallInfo] = useState<{name?: string, location?: string}>({});
@@ -14,6 +15,7 @@ export default function MoviePage() {
 
     // @ts-ignore
     const [movie, setMovie] = useState<MovieCardProps>();
+    const totalPrice: number = selectedSeats.reduce((sum: number, s) => sum + s.price, 0);
 
     useEffect(() => {
         if (!sessionTime || !_id) return;
@@ -57,7 +59,10 @@ export default function MoviePage() {
                         time: sessionTime
                     }
                 });
-                const seatData = response.data.seats;
+                const seatData = response.data.seats.map((seat: any) => ({
+                    ...seat,
+                    price: Number(seat.price)
+                }));
                 setSeats(seatData);
                 if (response.data.session?.day) {
                     setSessionDay(response.data.session.day);
@@ -136,19 +141,47 @@ export default function MoviePage() {
                     </div>
                 </div>
 
-                <SeatMap seats={seats} />
+                <SeatMap seats={seats}
+                         selectedSeats={selectedSeats}
+                         onSeatSelection={setSelectedSeats}/>
             </div>
-            <div className="w-80 bg-white border-l shadow-lg p-6 sticky top-0 h-screen flex flex-col justify-between">
+            <div className="w-100 bg-white border-l shadow-lg p-6 sticky top-0 h-screen flex flex-col justify-between">
                 <div>
-                    <h2 className="text-xl font-semibold mb-2">Квитки</h2>
-                    <p>0 квитків, 0 грн</p>
-                    <h2 className="text-xl font-semibold mt-6 mb-2">Товари бару</h2>
-                    <p>0 шт., 0 грн</p>
+                    <h2 className="text-xl font-semibold mb-4">Квитки</h2>
+
+                    {selectedSeats.length === 0 ? (
+                        <p className="text-gray-500">Немає обраних місць</p>
+                    ) : (
+                        <div className="space-y-3">
+                            {selectedSeats.map((s, i) => (
+                                <div key={i} className="border-gray-50 px-3 py-8 rounded-xl shadow-sm bg-gray-100 relative">
+                                    <button
+                                        onClick={() => setSelectedSeats(prev => prev.filter(seat => !(seat.row === s.row && seat.column === s.column)))}
+                                        className="absolute top-1 right-1 text-gray-500 bg-gray-300 rounded-full p-1 cursor-pointer hover:text-red-500"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <div className="flex justify-between px-6 items-start">
+                                        <div className={`flex flex-row gap-5`}>
+                                            <p className="font-medium">{s.row} ряд</p>
+                                            <p className="font-medium">{s.column} місце</p>
+                                        </div>
+                                        <p className="font-bold">{s.price} грн</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
-                <div>
-                    <p className="text-lg font-semibold mb-2">Всього до сплати: 0 грн</p>
-                    <button className="w-full bg-red-600 text-white py-3 rounded hover:bg-red-700">
+                <div className="mt-auto">
+                    <div className="flex justify-between items-center mb-4">
+                        <span className="font-medium">Всього:</span>
+                        <span className="font-bold">{totalPrice} грн</span>
+                    </div>
+                    <button className="w-full bg-red-600 text-white py-3 rounded hover:bg-red-700 font-medium">
                         Продовжити
                     </button>
                 </div>

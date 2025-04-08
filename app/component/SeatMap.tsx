@@ -10,10 +10,11 @@ export type Seat = {
 
 interface SeatMapProps {
     seats: Seat[];
+    selectedSeats: Seat[];
+    onSeatSelection: (selectedSeats: Seat[]) => void;
 }
 
-export default function SeatMap({ seats }: SeatMapProps) {
-    const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
+export default function SeatMap({ seats, selectedSeats, onSeatSelection }: SeatMapProps) {
     const [hoveredSeat, setHoveredSeat] = useState<Seat | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -32,13 +33,18 @@ export default function SeatMap({ seats }: SeatMapProps) {
             s => s.row === seat.row && s.column === seat.column
         );
 
+        let newSelectedSeats;
         if (isSelected) {
-            setSelectedSeats(prev =>
-                prev.filter(s => !(s.row === seat.row && s.column === seat.column))
-            );
+            newSelectedSeats = selectedSeats.filter(s => !(s.row === seat.row && s.column === seat.column));
         } else {
-            setSelectedSeats(prev => [...prev, seat]);
+            newSelectedSeats = [...selectedSeats, seat];
+            // setSelectedSeats(prev => [...prev, seat]);
         }
+        // setSelectedSeats(newSelectedSeats);
+        onSeatSelection(newSelectedSeats);
+        // setSelectedSeats(prev =>
+        //     prev.filter(s => !(s.row === seat.row && s.column === seat.column))
+        // );
     };
 
     const getSeatColor = (seat: Seat) => {
@@ -114,21 +120,21 @@ export default function SeatMap({ seats }: SeatMapProps) {
                 )}
             </div>
 
-            <div className="bg-gray-100 p-4 rounded shadow w-full max-w-md">
-                <h2 className="text-lg font-semibold mb-2">Обрані місця:</h2>
-                {selectedSeats.length === 0 ? (
-                    <p className="text-gray-500">Немає обраних місць</p>
-                ) : (
-                    <ul className="mb-2">
-                        {selectedSeats.map((s, i) => (
-                            <li key={i}>
-                                Ряд {s.row}, Місце {s.column} — {s.price} грн
-                            </li>
-                        ))}
-                    </ul>
-                )}
-                <p className="font-semibold">Всього: {totalPrice} грн</p>
-            </div>
+            {/*<div className="bg-gray-100 p-4 rounded shadow w-full max-w-md">*/}
+            {/*    <h2 className="text-lg font-semibold mb-2">Обрані місця:</h2>*/}
+            {/*    {selectedSeats.length === 0 ? (*/}
+            {/*        <p className="text-gray-500">Немає обраних місць</p>*/}
+            {/*    ) : (*/}
+            {/*        <ul className="mb-2">*/}
+            {/*            {selectedSeats.map((s, i) => (*/}
+            {/*                <li key={i}>*/}
+            {/*                    Ряд {s.row}, Місце {s.column} — {s.price} грн*/}
+            {/*                </li>*/}
+            {/*            ))}*/}
+            {/*        </ul>*/}
+            {/*    )}*/}
+            {/*    <p className="font-semibold">Всього: {totalPrice} грн</p>*/}
+            {/*</div>*/}
         </div>
     );
 }
