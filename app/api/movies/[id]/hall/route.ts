@@ -1,4 +1,3 @@
-// app/api/movies/[id]/hall-info/route.ts
 import { NextResponse } from 'next/server';
 import { clientDb } from "@/app/lib/mongodb";
 import { ObjectId } from 'mongodb';
@@ -7,7 +6,6 @@ export async function GET(
     request: Request,
     { params }: { params: { id: string } }
 ) {
-    console.log("TEST")
     try {
         const awaitedParams = await Promise.resolve(params);
         const { id } = awaitedParams;

@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({
         <header className="mt-5 w-full text-white h-16 px-6">
             <nav className={`flex flex-row h-full justify-between bg-white/5 w-full rounded-3xl p-5`}>
                 <div className="flex items-center">
-                    <button className="flex flex-col justify-between h-6 w-8 mr-4" aria-label="Menu">
+                    <button className="sm:flex flex-col hidden justify-between h-6 w-8 mr-4" aria-label="Menu">
                         <span className="w-full h-0.5 bg-white"></span>
                         <span className="w-full h-0.5 bg-white"></span>
                         <span className="w-full h-0.5 bg-white"></span>
@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({
                         onClick={toggleLocationList}
                         aria-label="Change location"
                     >
-                        <span className="mr-4">{currentLocation}</span>
+                        <span className="mr-4 hidden md:flex">{currentLocation}</span>
                         <span className="inline-block w-3 h-3 border-l border-b border-white transform rotate-[-45deg] mb-1"></span>
 
                         {isLocationListOpen && (
@@ -81,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({
                         className="flex items-center cursor-pointer text-white font-bold group"
                         onClick={openModal}
                     >
-                        Увійти
+                        <span className={`hidden sm:flex`}>Увійти</span>
                         <img className={`rounded-full ml-3 bg-gray-500 group-hover:bg-red-500`} src={"/ava_temp1.svg"} alt="User Avatar" />
                     </button>
                 </div>

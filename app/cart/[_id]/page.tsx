@@ -108,14 +108,12 @@ export default function MoviePage() {
 
     const handlePurchase = async () => {
         setShowContactModal(false);
-        // Email валідація (простий шаблон)
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             toast.error("Будь ласка, введіть коректний email", { duration: 2000 });
             return;
         }
 
-        // Телефон валідація (10+ цифр, український формат)
         const phoneRegex = /^\+?3?8?(0\d{9})$/;
         if (!phoneRegex.test(phone)) {
             toast.error("Будь ласка, введіть коректний номер телефону", { duration: 2000 });

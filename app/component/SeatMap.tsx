@@ -56,12 +56,10 @@ export default function SeatMap({ seats, selectedSeats, onSeatSelection }: SeatM
             s => s.row === seat.row && s.column === seat.column
         );
 
-        if (seat.status === "taken") return "bg-gray-300 hover:bg-red-400 cursor-not-allowed";
+        if (seat.status === "taken") return "bg-gray-400 hover:bg-red-400 cursor-not-allowed";
         if (isSelected) return "bg-blue-300 hover:bg-blue-300 cursor-pointer";
         return "bg-gray-200 hover:bg-blue-200 cursor-pointer";
     };
-
-    const totalPrice = selectedSeats.reduce((sum, s) => sum + s.price, 0);
 
     return (
         <div className="flex flex-col items-center">
