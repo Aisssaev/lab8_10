@@ -84,8 +84,8 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
         newMovie.sessions.length > 0;
 
     return (
-        <div className="fixed z-60 inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center">
-            <div className="flex flex-col bg-white/5 backdrop-blur-xl p-6 items-center rounded-lg w-[400px]">
+        <div className="fixed z-60 inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center ">
+            <div className="flex flex-col bg-white/5 backdrop-blur-xl p-6 items-center rounded-lg w-[400px] max-h-[90vh] overflow-y-scroll">
                 <h2 className="text-3xl text-center font-bold mb-4">Добавити новий фільм</h2>
                 <input
                     type="text"
@@ -172,7 +172,7 @@ const AddCardModal = ({ onAddMovie, onClose }: ModalProps) => {
                     </select>
                     <button
                         onClick={handleAddSession}
-                        className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                        className="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
                     >
                         Додати сеанс
                     </button>

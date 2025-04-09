@@ -23,6 +23,7 @@ export async function POST(
         const db = await clientDb;
         const sessionsCollection = db.collection('sessions');
         const seatsCollection = db.collection('seats');
+        const ticketsCollection = db.collection('tickets');
 
         const session = await sessionsCollection.findOne({
             movie: new ObjectId(id),
@@ -45,7 +46,25 @@ export async function POST(
             );
         }
 
-        return NextResponse.json({ message: 'Місця успішно оновлено' });
+        const newTicket = {
+            movieId: new ObjectId(id),
+            sessionTime,
+            sessionId,
+            seats: seats.map(seat => ({
+                _id: new ObjectId(seat._id),
+                row: seat.row,
+                column: seat.column,
+            })),
+            createdAt: new Date(),
+            isUsed: false
+        };
+
+        const result = await ticketsCollection.insertOne(newTicket);
+
+        return NextResponse.json({
+            message: 'Місця оновлено, квиток збережено',
+            ticketId: result.insertedId.toString()
+        });
     } catch (error) {
         console.error('Помилка при оновленні місць:', error);
         return NextResponse.json(

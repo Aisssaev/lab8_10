@@ -35,7 +35,7 @@ function MovieCard({_id, title, ageRating, posterUrl, sessions}: MovieCardProps)
 
             <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 text-white z-10">
                 <div className={`flex flex-col items-center`}>
-                    <h3 className="text-3xl font-bold drop-shadow-md whitespace-nowrap">{title}</h3>
+                    <h3 className="text-3xl font-bold drop-shadow-md whitespace-nowrap text-center">{title}</h3>
                     <span className="mt-2 inline-block bg-red-600 px-3 py-1 rounded-full text-sm font-semibold">
                         {ageRating}
                     </span>
@@ -58,7 +58,7 @@ function MovieCard({_id, title, ageRating, posterUrl, sessions}: MovieCardProps)
                     </div>
                 </div>
                 <div className={`mb-3 flex flex-col items-center`}>
-                    <h3 className="text-3xl font-bold drop-shadow-md">{title}</h3>
+                    <h3 className="text-3xl font-bold drop-shadow-md text-wrap">{title}</h3>
                     <span className="mt-2 inline-block bg-red-600 px-3 py-1 rounded-full text-sm font-semibold">
                         {ageRating}
                     </span>

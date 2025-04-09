@@ -10,12 +10,33 @@ function MovieList({ movies }: MovieListProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
     const scrollAmount = 470;
 
-    const today = new Date().toISOString().split("T")[0];
-    const moviesToday = movies.filter((movie) =>
-        movie.sessions?.some((s) => {
-            return s.day === today
+    const now = new Date();
+    const today = now.toISOString().split("T")[0];
+
+    const moviesToday = movies
+        .map((movie) => {
+            const futureSessions = movie.sessions?.filter((session) => {
+                if (session.day !== today) return false;
+
+                const [hours, minutes] = session.time.split(":").map(Number);
+                const sessionDateTime = new Date();
+
+                sessionDateTime.setHours(hours);
+                sessionDateTime.setMinutes(minutes);
+                sessionDateTime.setSeconds(0);
+                sessionDateTime.setMilliseconds(0);
+
+                return sessionDateTime > now;
+            });
+
+            if (futureSessions.length > 0) {
+                return { ...movie, sessions: futureSessions };
+            }
+
+            return null;
         })
-    );
+        .filter((movie): movie is MovieCardProps => movie !== null);
+
 
     const scrollLeft = () => {
         if (scrollRef.current) {
